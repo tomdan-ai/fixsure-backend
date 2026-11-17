@@ -1,13 +1,12 @@
 import "reflect-metadata";
-import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from "typeorm";
 import { User } from "./User";
 import { MaintenanceRequest } from "./MaintenanceRequest";
-import { Quote } from "./Quote";
 
 @Entity()
 export class Property {
-  @PrimaryColumn("uuid")
-  id!: number;
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
 
   @Column()
   name!: string;
@@ -22,6 +21,7 @@ export class Property {
   managerId!: string;
 
   @ManyToOne(() => User, (user) => user.managedProperties)
+  @JoinColumn({ name: "managerId" })
   manager!: User;
 
   @OneToMany(() => MaintenanceRequest, (request) => request.property)

@@ -1,11 +1,11 @@
 import "reflect-metadata";
-import { Entity, PrimaryColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import { MaintenanceRequest } from "./MaintenanceRequest";
 import { User } from "./User";
 
 @Entity()
 export class Evidence {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @Column()
@@ -17,15 +17,16 @@ export class Evidence {
   @Column()
   url!: string;
 
-  @Column()
+  @Column({ default: "" })
   note!: string;
 
   @Column({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   createdAt!: Date;
 
-  @ManyToOne(() => MaintenanceRequest, (request) => request.evidence)
+  @ManyToOne(() => MaintenanceRequest, (request) => request.evidence, { nullable: true })
+  @JoinColumn({ name: "requestId" })
   request!: MaintenanceRequest;
 
-  @ManyToOne(() => User, (user) => user.evidence)
+  @ManyToOne(() => User, (user) => user.evidence, { nullable: true })
   uploadedBy!: User;
 }

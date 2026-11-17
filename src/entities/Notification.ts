@@ -1,8 +1,10 @@
+import "reflect-metadata";
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  JoinColumn,
 } from "typeorm";
 import { User } from "./User";
 
@@ -23,6 +25,7 @@ export class Notification {
   @Column({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   createdAt!: Date;
 
-  @ManyToOne(() => User, (user) => user.notifications)
+  @ManyToOne(() => User, (user) => user.notifications, { nullable: true })
+  @JoinColumn({ name: "userId" })
   user!: User;
 }

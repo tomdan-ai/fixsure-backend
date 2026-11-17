@@ -1,9 +1,9 @@
 import "reflect-metadata";
 import {
   Entity,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
+  OneToOne,
   OneToMany,
   Unique,
 } from "typeorm";
@@ -19,7 +19,7 @@ import { AuditLog } from "./AuditLog";
 @Entity()
 @Unique(["email"])
 export class User {
-  @PrimaryColumn("uuid")
+  @PrimaryGeneratedColumn("uuid")
   id!: string;
 
   @Column()
@@ -31,10 +31,10 @@ export class User {
   @Column()
   passwordHash!: string;
 
-  @Column()
+  @Column({ default: "" })
   phone!: string;
 
-  @Column()
+  @Column({ default: "MANAGER" })
   role!: "MANAGER" | "TECHNICIAN" | "ADMIN";
 
   @Column({ default: "ACTIVE" })
@@ -46,10 +46,10 @@ export class User {
   @Column({ default: "NOT_STARTED" })
   identityStatus!: "NOT_STARTED" | "PENDING" | "IN_REVIEW" | "VERIFIED" | "REJECTED" | "EXPIRED" | "REQUIRES_RESUBMISSION";
 
-  @Column()
+  @Column({ default: "NOT_STARTED" })
   professionalStatus!: string;
 
-  @ManyToOne(() => TechnicianProfile, (profile) => profile.user, { nullable: true })
+  @OneToOne(() => TechnicianProfile, (profile) => profile.user, { nullable: true })
   technicianProfile!: TechnicianProfile | null;
 
   @OneToMany(() => MaintenanceRequest, (request) => request.createdBy)
@@ -67,10 +67,10 @@ export class User {
   @OneToMany(() => Dispute, (dispute) => dispute.raisedBy)
   disputes!: Dispute[];
 
-  @OneToMany(() => Notification, (notification) => notification.userId)
+  @OneToMany(() => Notification, (notification) => notification.user)
   notifications!: Notification[];
 
-  @OneToMany(() => AuditLog, (log) => log.actorId)
+  @OneToMany(() => AuditLog, (log) => log.actor)
   auditLogs!: AuditLog[];
 
   getBadges() {

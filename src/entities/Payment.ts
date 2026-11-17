@@ -1,34 +1,35 @@
 import "reflect-metadata";
-import { Entity, PrimaryColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import { MaintenanceRequest } from "./MaintenanceRequest";
 import { User } from "./User";
 
 @Entity()
 export class Payment {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @Column()
   requestId!: number;
 
-  @Column({ enum: ["COLLECTION", "PAYOUT", "REFUND"] })
+  @Column({ enum: ["COLLECTION", "PAYOUT", "REFUND"], default: "COLLECTION" })
   type!: "COLLECTION" | "PAYOUT" | "REFUND";
 
   @Column()
   internalRef!: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: "varchar" })
   providerRef!: string | null;
 
-  @Column()
+  @Column("numeric")
   amount!: number;
 
   @Column({ default: "PENDING" })
   status!: "PENDING" | "SUCCESS" | "FAILED" | "REVERSED";
 
-  @ManyToOne(() => User, (user) => user.payments)
+  @ManyToOne(() => User, (user) => user.payments, { nullable: true })
   requester!: User;
 
-  @ManyToOne(() => MaintenanceRequest, (request) => request.auditLogs)
+  @ManyToOne(() => MaintenanceRequest, (request) => request.payments, { nullable: true })
+  @JoinColumn({ name: "requestId" })
   request!: MaintenanceRequest;
 }

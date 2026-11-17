@@ -1,14 +1,12 @@
+import "reflect-metadata";
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  JoinColumn,
 } from "typeorm";
 import { User } from "./User";
-import { MaintenanceRequest } from "./MaintenanceRequest";
-import { Quote } from "./Quote";
-import { Payment } from "./Payment";
-import { Dispute } from "./Dispute";
 
 @Entity()
 export class AuditLog {
@@ -24,7 +22,7 @@ export class AuditLog {
   @Column()
   entity!: string;
 
-  @Column()
+  @Column({ nullable: true })
   entityId!: number;
 
   @Column("jsonb", { default: {} })
@@ -33,6 +31,7 @@ export class AuditLog {
   @Column({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   createdAt!: Date;
 
-  @ManyToOne(() => User, (user) => user.auditLogs)
+  @ManyToOne(() => User, (user) => user.auditLogs, { nullable: true })
+  @JoinColumn({ name: "actorId" })
   actor!: User;
 }

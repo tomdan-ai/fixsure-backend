@@ -1,27 +1,28 @@
 import "reflect-metadata";
-import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from "typeorm";
 import { User } from "./User";
 
 @Entity()
 export class TechnicianProfile {
-  @PrimaryColumn("uuid")
+  @PrimaryGeneratedColumn("uuid")
   id!: string;
 
   @Column()
   userId!: string;
 
-  @ManyToOne(() => User, (user) => user.technicianProfile)
+  @OneToOne(() => User, (user) => user.technicianProfile)
+  @JoinColumn({ name: "userId" })
   user!: User;
 
-  @Column("jsonb")
+  @Column("jsonb", { default: [] })
   categories!: string[];
 
-  @Column()
+  @Column({ default: "" })
   city!: string;
 
-  @Column()
+  @Column({ default: "" })
   bio!: string;
 
-  @Column()
+  @Column({ default: "NOT_STARTED" })
   professionalStatus!: string;
 }
